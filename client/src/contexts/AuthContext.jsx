@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { API_URL } from '../config/api.js';  // ADD THIS IMPORT
+import { API_URL } from '../config/api.js';
 
 const AuthContext = createContext();
 
@@ -27,7 +27,9 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {  // CHANGED THIS LINE
+      console.log('Attempting login with:', email); // Debug
+      
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,23 +38,38 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await response.json();
+      console.log('Login API response:', data); // Debug
 
-      if (response.ok) {
+      if (response.ok && data.success) {
+        // Save token and user data
+        const userData = data.user || data.data;
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data));
-        setUser(data);
-        return { success: true };
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+        
+        console.log('Login successful, user:', userData); // Debug
+        
+        // Return success for the Login component
+        return { success: true, user: userData };
       } else {
-        return { success: false, message: data.message };
+        // Return failure
+        return { 
+          success: false, 
+          message: data.message || 'Login failed' 
+        };
       }
     } catch (error) {
-      return { success: false, message: 'Network error occurred' };
+      console.error('Login error:', error);
+      return { 
+        success: false, 
+        message: 'Network error occurred' 
+      };
     }
   };
 
   const register = async (userData) => {
     try {
-      const response = await fetch(`${API_URL}/api/auth/register`, {  // CHANGED THIS LINE
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,16 +79,23 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
 
-      if (response.ok) {
+      if (response.ok && data.success) {
+        const userData = data.user || data.data;
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data));
-        setUser(data);
-        return { success: true };
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+        return { success: true, user: userData };
       } else {
-        return { success: false, message: data.message };
+        return { 
+          success: false, 
+          message: data.message || 'Registration failed' 
+        };
       }
     } catch (error) {
-      return { success: false, message: 'Network error occurred' };
+      return { 
+        success: false, 
+        message: 'Network error occurred' 
+      };
     }
   };
 

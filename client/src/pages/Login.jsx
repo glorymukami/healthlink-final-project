@@ -8,9 +8,17 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Login form submitted with:', { email, password }); // Debug
+    
     const result = await login(email, password);
+    console.log('Login result:', result); // Debug
+    
     if (result.success) {
+      console.log('Login successful, redirecting to dashboard...'); // Debug
       window.location.href = '/dashboard';
+    } else {
+      console.log('Login failed:', result.message); // Debug
+      alert(result.message || 'Login failed. Please try again.');
     }
   };
 
