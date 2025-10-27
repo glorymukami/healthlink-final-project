@@ -23,7 +23,7 @@
     "mongodb",
     "api"
   ],
-  "author": "Your Name",
+  "author": "Glory Mukami",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
@@ -46,6 +46,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YOUR_USERNAME/healthlink-final-project"
+    "url": "https://github.com/glorymukami/healthlink-final-project.git"
   }
 }
