@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { API_URL } from '../../config/api.js';  // ADD THIS IMPORT
 
 const BookAppointment = ({ doctor, onAppointmentBooked }) => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -23,7 +24,7 @@ const BookAppointment = ({ doctor, onAppointmentBooked }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/appointments', {
+      const response = await fetch(`${API_URL}/api/appointments`, {  // CHANGED THIS LINE
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ const BookAppointment = ({ doctor, onAppointmentBooked }) => {
 
   return (
     <div className="card">
-      <h3 className="text-xl font-semibold mb-4">Book Appointment with Dr. {doctor.user.name}</h3>
+      <h3 className="text-xl font-semibold mb-4">Book Appointment with Dr. {doctor.user?.name || doctor.name}</h3>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Date Selection */}

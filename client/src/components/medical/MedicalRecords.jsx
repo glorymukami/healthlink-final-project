@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../../config/api.js';  // ADD THIS IMPORT
 
 const MedicalRecords = () => {
   const [records, setRecords] = useState([]);
@@ -11,7 +12,7 @@ const MedicalRecords = () => {
   const fetchMedicalRecords = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/medical-records/patient', {
+      const response = await fetch(`${API_URL}/api/medical-records/patient`, {  // CHANGED THIS LINE
         headers: {
           'Authorization': `Bearer ${token}`
         }

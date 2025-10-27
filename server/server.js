@@ -7,8 +7,20 @@ dotenv.config();
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Enhanced CORS for production
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'https://healthlink-final-project.vercel.app',
+    'https://healthlink-glory.vercel.app',
+    'https://healthlink-mukami.vercel.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
+}));
+
 app.use(express.json());
 
 // Import routes (ONLY THE ONES THAT EXIST)
@@ -73,7 +85,8 @@ app.get('/api/health', (req, res) => {
     version: '2.0.0',
     database: mongoose.connection.readyState === 1 ? '✅ Connected' : '❌ Disconnected',
     timestamp: new Date().toISOString(),
-    uptime: `${process.uptime().toFixed(2)} seconds`
+    uptime: `${process.uptime().toFixed(2)} seconds`,
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -90,7 +103,15 @@ app.use((req, res) => {
   res.status(404).json({
     message: '❌ Route not found',
     path: req.originalUrl,
-    method: req.method
+    method: req.method,
+    availableEndpoints: [
+      'GET /',
+      'GET /api/health',
+      'POST /api/auth/register',
+      'POST /api/auth/login',
+      'GET /api/doctors',
+      'POST /api/appointments'
+    ]
   });
 });
 
@@ -99,22 +120,35 @@ app.use((err, req, res, next) => {
   console.error('❌ Server Error:', err.stack);
   res.status(500).json({
     message: 'Something went wrong on the server!',
-    error: process.env.NODE_ENV === 'production' ? {} : err.message
+    error: process.env.NODE_ENV === 'production' ? {} : err.message,
+    timestamp: new Date().toISOString()
   });
 });
 
-// Database connection
+// Enhanced Database connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/healthlink';
 
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected Successfully'))
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => {
+    console.log('✅ MongoDB Connected Successfully');
+    console.log(`📊 Database: ${mongoose.connection.db?.databaseName || 'healthlink'}`);
+  })
   .catch(err => {
     console.log('❌ MongoDB Connection Error:', err.message);
+    process.exit(1);
   });
+
+// MongoDB connection events
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️ MongoDB disconnected');
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════╗
 ║                🏥 HEALTHLINK API v2.0.0               ║
@@ -123,6 +157,7 @@ const server = app.listen(PORT, () => {
 
 🚀 Server running on port ${PORT}
 📍 Local: http://localhost:${PORT}
+🌐 Network: http://0.0.0.0:${PORT}
 📊 Health: http://localhost:${PORT}/api/health
 
 🔐 AUTHENTICATION
@@ -150,6 +185,17 @@ const server = app.listen(PORT, () => {
 process.on('SIGTERM', () => {
   console.log('👋 SIGTERM received, shutting down gracefully');
   server.close(() => {
+    mongoose.connection.close();
     console.log('💤 Process terminated');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('👋 SIGINT received, shutting down gracefully');
+  server.close(() => {
+    mongoose.connection.close();
+    console.log('💤 Process terminated');
+    process.exit(0);
   });
 });

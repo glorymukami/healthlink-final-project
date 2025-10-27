@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FeedbackModal from '../feedback/FeedbackModal';
+import { API_URL } from '../../config/api.js';  // ADD THIS IMPORT
 
 const AppointmentsList = () => {
   const [appointments, setAppointments] = useState([]);
@@ -16,7 +17,7 @@ const AppointmentsList = () => {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/appointments/my-appointments', {
+      const response = await fetch(`${API_URL}/api/appointments/my-appointments`, {  // CHANGED THIS LINE
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -36,7 +37,7 @@ const AppointmentsList = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await fetch('/api/doctors');
+      const response = await fetch(`${API_URL}/api/doctors`);  // CHANGED THIS LINE
       const data = await response.json();
       
       if (data.success) {

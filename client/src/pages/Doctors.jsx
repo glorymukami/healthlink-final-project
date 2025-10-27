@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BookAppointment from '../components/appointments/BookAppointment';
+import { API_URL } from '../config/api.js';  // ADD THIS IMPORT
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -13,11 +14,15 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await fetch('/api/doctors');
+      const response = await fetch(`${API_URL}/api/doctors`);  // CHANGED THIS LINE
       const data = await response.json();
       
+      console.log('Doctors API Response:', data);
+      
       if (data.success) {
-        setDoctors(data.data);
+        setDoctors(data.data || []);
+      } else {
+        setDoctors([]);
       }
     } catch (error) {
       console.error('Error fetching doctors:', error);
@@ -34,7 +39,6 @@ const Doctors = () => {
   const handleAppointmentBooked = (appointment) => {
     setShowBookingForm(false);
     setSelectedDoctor(null);
-    // You could redirect to appointments page or show confirmation
     console.log('Appointment booked:', appointment);
   };
 
@@ -95,7 +99,7 @@ const Doctors = () => {
               <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">👨‍⚕️</span>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Dr. {doctor.user?.name}</h3>
+              <h3 className="text-xl font-semibold mb-2">Dr. {doctor.user?.name || doctor.name}</h3>
               <p className="text-medical-600 mb-2 capitalize">{doctor.specialization}</p>
               <p className="text-gray-600 text-sm mb-2">{doctor.experience} years experience</p>
               <p className="text-gray-800 font-semibold mb-4">${doctor.fees} consultation</p>
@@ -117,6 +121,7 @@ const Doctors = () => {
         {doctors.length === 0 && !loading && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">No doctors available at the moment.</p>
+            <p className="text-gray-400 text-sm mt-2">Please check back later or contact administration.</p>
           </div>
         )}
       </div>

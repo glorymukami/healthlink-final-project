@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_URL } from '../../config/api.js';  // ADD THIS IMPORT
 
 const FeedbackForm = ({ appointmentId, onFeedbackSubmitted }) => {
   const [rating, setRating] = useState(0);
@@ -16,7 +17,7 @@ const FeedbackForm = ({ appointmentId, onFeedbackSubmitted }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/appointments/${appointmentId}/feedback`, {
+      const response = await fetch(`${API_URL}/api/appointments/${appointmentId}/feedback`, {  // CHANGED THIS LINE
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

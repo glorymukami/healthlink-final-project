@@ -10,6 +10,11 @@ import Doctors from './pages/Doctors';
 import HealthTips from './pages/HealthTips';
 
 function App() {
+  // Debug: Check if environment variable is loading
+  console.log('Environment check:');
+  console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
+  console.log('All env variables:', import.meta.env);
+
   return (
     <AuthProvider>
       <Router>
