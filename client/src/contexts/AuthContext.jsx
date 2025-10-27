@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      console.log('Attempting login with:', email); // Debug
+      console.log('Attempting login with:', email);
       
       const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
@@ -38,26 +38,42 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await response.json();
-      console.log('Login API response:', data); // Debug
+      console.log('Login API response:', data);
 
-      if (response.ok && data.success) {
-        // Save token and user data
-        const userData = data.user || data.data;
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-        
-        console.log('Login successful, user:', userData); // Debug
-        
-        // Return success for the Login component
-        return { success: true, user: userData };
-      } else {
-        // Return failure
-        return { 
-          success: false, 
-          message: data.message || 'Login failed' 
-        };
+      // Handle successful login - FIXED VERSION
+      if (response.ok) {
+        // If response has token directly (your current backend format)
+        if (data.token) {
+          const userData = {
+            _id: data._id,
+            name: data.name,
+            email: data.email,
+            role: data.role
+          };
+          
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(userData));
+          setUser(userData);
+          
+          console.log('Login successful, user:', userData);
+          return { success: true, user: userData };
+        }
+        // If response has success field (expected format)
+        else if (data.success) {
+          const userData = data.user || data.data;
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(userData));
+          setUser(userData);
+          return { success: true, user: userData };
+        }
       }
+      
+      // If we get here, login failed
+      return { 
+        success: false, 
+        message: data.message || 'Login failed' 
+      };
+      
     } catch (error) {
       console.error('Login error:', error);
       return { 
@@ -79,18 +95,37 @@ export const AuthProvider = ({ children }) => {
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
-        const userData = data.user || data.data;
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-        return { success: true, user: userData };
-      } else {
-        return { 
-          success: false, 
-          message: data.message || 'Registration failed' 
-        };
+      // Handle successful registration - FIXED VERSION
+      if (response.ok) {
+        // If response has token directly
+        if (data.token) {
+          const userData = {
+            _id: data._id,
+            name: data.name,
+            email: data.email,
+            role: data.role
+          };
+          
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(userData));
+          setUser(userData);
+          return { success: true, user: userData };
+        }
+        // If response has success field
+        else if (data.success) {
+          const userData = data.user || data.data;
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(userData));
+          setUser(userData);
+          return { success: true, user: userData };
+        }
       }
+      
+      return { 
+        success: false, 
+        message: data.message || 'Registration failed' 
+      };
+      
     } catch (error) {
       return { 
         success: false, 
