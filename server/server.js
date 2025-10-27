@@ -12,7 +12,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://healthlink-final-project-12kq.vercel.app',  // ← YOUR EXACT URL
+    'https://healthlink-final-project-12kq.vercel.app',
     'https://healthlink-final-project-3v61dgkls-glory-mukamis-projects.vercel.app',
     'https://healthlink-final-project.vercel.app',
     'https://healthlink-glory.vercel.app',
@@ -40,6 +40,65 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/medical-records', medicalRecordRoutes);
 
+// Temporary route to create teacher test accounts
+app.post('/api/setup/teacher-accounts', async (req, res) => {
+  try {
+    const User = (await import('./models/User.js')).default;
+    const Doctor = (await import('./models/Doctor.js')).default;
+    const bcrypt = await import('bcryptjs');
+    
+    // Clear existing test accounts
+    await User.deleteMany({ 
+      email: { 
+        $in: ['test.patient@healthlink.com', 'test.doctor@healthlink.com'] 
+      } 
+    });
+    
+    // Create test patient
+    const patient = new User({
+      name: 'Test Patient',
+      email: 'test.patient@healthlink.com',
+      password: await bcrypt.hash('patient123', 12),
+      role: 'patient'
+    });
+    await patient.save();
+    
+    // Create test doctor
+    const doctorUser = new User({
+      name: 'Dr. Sarah Wilson',
+      email: 'test.doctor@healthlink.com',
+      password: await bcrypt.hash('doctor123', 12),
+      role: 'doctor'
+    });
+    await doctorUser.save();
+    
+    // Create doctor profile
+    const doctorProfile = new Doctor({
+      userId: doctorUser._id,
+      specialization: 'Cardiology',
+      experience: 8,
+      fees: 150,
+      bio: 'Heart specialist with 8 years of experience'
+    });
+    await doctorProfile.save();
+    
+    res.json({
+      success: true,
+      message: 'Teacher test accounts created successfully!',
+      accounts: {
+        patient: { email: 'test.patient@healthlink.com', password: 'patient123' },
+        doctor: { email: 'test.doctor@healthlink.com', password: 'doctor123' }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error creating test accounts',
+      error: error.message
+    });
+  }
+});
+
 // Basic route
 app.get('/', (req, res) => {
   res.json({ 
@@ -57,7 +116,8 @@ app.get('/', (req, res) => {
       auth: {
         register: 'POST /api/auth/register',
         login: 'POST /api/auth/login',
-        test: 'GET /api/auth/test'
+        test: 'GET /api/auth/test',
+        teacherSetup: 'POST /api/setup/teacher-accounts'
       },
       doctors: {
         list: 'GET /api/doctors',
@@ -114,6 +174,7 @@ app.use((req, res) => {
       'GET /api/health',
       'POST /api/auth/register',
       'POST /api/auth/login',
+      'POST /api/setup/teacher-accounts',
       'GET /api/doctors',
       'POST /api/appointments'
     ]
@@ -168,6 +229,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 🔐 AUTHENTICATION
    Register: POST http://localhost:${PORT}/api/auth/register
    Login:    POST http://localhost:${PORT}/api/auth/login
+   Teacher Setup: POST http://localhost:${PORT}/api/setup/teacher-accounts
 
 👨‍⚕️ DOCTORS
    List:     GET http://localhost:${PORT}/api/doctors
