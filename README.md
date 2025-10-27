@@ -6,8 +6,8 @@
 *(Replace this with your actual deployment link after going live)*
 
 **Frontend URL:** [Vercel Deployment Link]  
-**Backend API:** [Render/Railway Deployment Link]  
-**Test Credentials:** [Add demo login details if available]
+**Backend API:** [https://healthlink-backend-lzm2.onrender.com]  
+**Test Credentials:** []
 
 ---
 
