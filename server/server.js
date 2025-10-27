@@ -12,6 +12,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
+    'https://healthlink-final-project-12kq.vercel.app',  // ← YOUR EXACT URL
+    'https://healthlink-final-project-3v61dgkls-glory-mukamis-projects.vercel.app',
     'https://healthlink-final-project.vercel.app',
     'https://healthlink-glory.vercel.app',
     'https://healthlink-mukami.vercel.app'
@@ -20,6 +22,9 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token']
 }));
+
+// Handle preflight requests explicitly
+app.options('*', cors());
 
 app.use(express.json());
 
