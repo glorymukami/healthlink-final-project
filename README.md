@@ -5,7 +5,7 @@
 🚀 **Live Application:** [Your deployed link here]  
 *(Replace this with your actual deployment link after going live)*
 
-**Frontend URL:** [https://healthlink-final-project-3v61dgkls-glory-mukamis-projects.vercel.app/]  
+**Frontend URL:** [https://healthlink-final-project-12kq.vercel.app/]  
 **Backend API:** [https://healthlink-backend-lzm2.onrender.com]  
 **Test Credentials:** []
 
