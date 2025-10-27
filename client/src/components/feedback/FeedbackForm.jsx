@@ -16,7 +16,7 @@ const FeedbackForm = ({ appointmentId, onFeedbackSubmitted }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/appointments/${appointmentId}/feedback`, {
+      const response = await fetch(`/api/appointments/${appointmentId}/feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

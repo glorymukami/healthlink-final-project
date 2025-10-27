@@ -16,7 +16,7 @@ const AppointmentsList = () => {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/appointments/my-appointments', {
+      const response = await fetch('/api/appointments/my-appointments', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -36,7 +36,7 @@ const AppointmentsList = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/doctors');
+      const response = await fetch('/api/doctors');
       const data = await response.json();
       
       if (data.success) {

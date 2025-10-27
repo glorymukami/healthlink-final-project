@@ -11,7 +11,7 @@ const MedicalRecords = () => {
   const fetchMedicalRecords = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/medical-records/patient', {
+      const response = await fetch('/api/medical-records/patient', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
