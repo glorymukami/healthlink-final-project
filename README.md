@@ -2,8 +2,7 @@
 
 ## 🎯 Live Demo
 
-🚀 **Live Application:** [Your deployed link here]  
-*(Replace this with your actual deployment link after going live)*
+🚀 **Live Application:** [https://glorymukami.github.io/healthlink-final-project/]  
 
 **Frontend URL:** [https://healthlink-final-project-12kq.vercel.app/]  
 **Backend API:** [https://healthlink-backend-lzm2.onrender.com]  
