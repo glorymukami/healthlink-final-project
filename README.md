@@ -2,11 +2,11 @@
 
 ## 🎯 Live Demo
 
-🚀 **Live Application:** [Your deployed link here]  
-*(Replace this with your actual deployment link after going live)*
+🚀 **Live Application:** []  
+*()*
 
 **Frontend URL:** [Vercel Deployment Link]  
-**Backend API:** [https://healthlink-backend-lzm2.onrender.com]  
+**Backend API:** [https://healthlink-final-project-3v61dgkls-glory-mukamis-projects.vercel.app/]  
 **Test Credentials:** []
 
 ---
