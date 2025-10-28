@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FeedbackModal from '../feedback/FeedbackModal';
 import { API_URL } from '../../config/api.js';
 
-const AppointmentsList = () => {
+const AppointmentsList = ({ refreshTrigger, onRefresh }) => {  // ADD THESE PROPS
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState({});
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ const AppointmentsList = () => {
   useEffect(() => {
     fetchAppointments();
     fetchDoctors();
-  }, []);
+  }, [refreshTrigger]);  // ADD refreshTrigger DEPENDENCY
 
   // Add the same doctor name function here
   const getDoctorName = (doctor) => {
@@ -31,6 +31,7 @@ const AppointmentsList = () => {
 
   const fetchAppointments = async () => {
     try {
+      setLoading(true); // Show loading when refreshing
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/api/appointments/my-appointments`, {
         headers: {
@@ -42,6 +43,8 @@ const AppointmentsList = () => {
       
       if (data.success) {
         setAppointments(data.data);
+      } else {
+        setAppointments([]);
       }
     } catch (error) {
       console.error('Error fetching appointments:', error);
@@ -64,6 +67,14 @@ const AppointmentsList = () => {
       }
     } catch (error) {
       console.error('Error fetching doctors:', error);
+    }
+  };
+
+  // Manual refresh function
+  const handleManualRefresh = () => {
+    fetchAppointments();
+    if (onRefresh) {
+      onRefresh();
     }
   };
 
@@ -144,7 +155,15 @@ const AppointmentsList = () => {
         />
       )}
 
-      <h3 className="text-lg font-semibold mb-4">Your Appointments</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">Your Appointments</h3>
+        <button 
+          onClick={handleManualRefresh}
+          className="btn-secondary text-sm"
+        >
+          🔄 Refresh
+        </button>
+      </div>
       
       {appointments.length === 0 ? (
         <div className="text-center py-8">

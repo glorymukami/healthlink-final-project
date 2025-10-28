@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import AppointmentsList from '../components/appointments/AppointmentsList';
 import MedicalRecords from '../components/medical/MedicalRecords';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [refreshAppointments, setRefreshAppointments] = useState(0);
+
+  // Function to trigger appointments refresh
+  const refreshAppointmentsList = () => {
+    setRefreshAppointments(prev => prev + 1);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -21,7 +27,7 @@ const Dashboard = () => {
           <div className="lg:col-span-2 space-y-8">
             {/* Appointments Section */}
             <div className="card">
-              <AppointmentsList />
+              <AppointmentsList refreshTrigger={refreshAppointments} onRefresh={refreshAppointmentsList} />
             </div>
             
             {/* Medical Records Section */}
@@ -40,11 +46,14 @@ const Dashboard = () => {
                 <a href="/doctors" className="btn-primary w-full block text-center">
                   📅 Book New Appointment
                 </a>
+                <button 
+                  onClick={refreshAppointmentsList}
+                  className="btn-secondary w-full block text-center"
+                >
+                  🔄 Refresh Appointments
+                </button>
                 <a href="/health-tips" className="btn-secondary w-full block text-center">
                   💡 Health Tips
-                </a>
-                <a href="/doctors" className="btn-secondary w-full block text-center">
-                  👨‍⚕️ Find Doctors
                 </a>
               </div>
             </div>
