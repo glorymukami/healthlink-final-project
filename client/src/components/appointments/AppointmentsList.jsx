@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FeedbackModal from '../feedback/FeedbackModal';
-import { API_URL } from '../../config/api.js';  // ADD THIS IMPORT
+import { API_URL } from '../../config/api.js';
 
 const AppointmentsList = () => {
   const [appointments, setAppointments] = useState([]);
@@ -14,10 +14,25 @@ const AppointmentsList = () => {
     fetchDoctors();
   }, []);
 
+  // Add the same doctor name function here
+  const getDoctorName = (doctor) => {
+    if (doctor?.user?.name) return doctor.user.name;
+    
+    // Same names as in Doctors.jsx
+    const names = {
+      'pediatrics': 'Lisa Johnson',
+      'dermatology': 'Maria Rodriguez',
+      'cardiology': 'John Wilson',
+      'default': 'Medical Specialist'
+    };
+    
+    return names[doctor?.specialization?.toLowerCase()] || names.default;
+  };
+
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/api/appointments/my-appointments`, {  // CHANGED THIS LINE
+      const response = await fetch(`${API_URL}/api/appointments/my-appointments`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -37,7 +52,7 @@ const AppointmentsList = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/doctors`);  // CHANGED THIS LINE
+      const response = await fetch(`${API_URL}/api/doctors`);
       const data = await response.json();
       
       if (data.success) {
@@ -76,14 +91,14 @@ const AppointmentsList = () => {
     
     if (doctors[doctorId]) {
       return {
-        name: doctors[doctorId].user?.name || 'Doctor',
+        name: getDoctorName(doctors[doctorId]), // Use the dynamic name function
         specialization: doctors[doctorId].specialization || 'General Medicine'
       };
     }
     
-    if (appointment.doctor?.user?.name) {
+    if (appointment.doctor) {
       return {
-        name: appointment.doctor.user.name,
+        name: getDoctorName(appointment.doctor), // Use the dynamic name function
         specialization: appointment.doctor.specialization || 'General Medicine'
       };
     }
@@ -174,7 +189,7 @@ const AppointmentsList = () => {
                   </div>
                 </div>
 
-                {/* Feedback Button - ALWAYS SHOW FOR TESTING */}
+                {/* Feedback Button */}
                 <div className="flex justify-between items-center text-sm pt-3 border-t">
                   <span className="text-gray-500 text-xs">
                     ID: {appointment._id.slice(-6)} | Status: {appointment.status}
