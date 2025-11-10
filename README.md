@@ -6,9 +6,7 @@
 
 **Frontend URL:** [https://healthlink-final-project-12kq.vercel.app/]  
 **Backend API:** [https://healthlink-backend-lzm2.onrender.com]  
-**Test Credentials:** [Patient: test.patient@healthlink.com / patient123
-
-Doctor: test.doctor@healthlink.com / doctor123]
+**Github URL:** [https://github.com/glorymukami/healthlink-final-project.git]
 
 ---
 
